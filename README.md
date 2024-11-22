@@ -1,4 +1,4 @@
-# PoliMi Run Race Results Processor 🏃‍♂️📊
+# PoliMi Run Race Results Processor
 
 ## Overview
 A Python application to extract, sort, and format race results from PDF files, specifically designed for the PoliMi Run event. Supports both command-line and graphical user interfaces.
