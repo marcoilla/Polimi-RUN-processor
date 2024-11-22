@@ -77,6 +77,10 @@ python main.py -i input_folder -o output_folder
 | CSV Only | - | `--csv-only` | Generate only sorted CSV files | No | False |
 | Verbose | `-v` | `--verbose` | Print detailed processing information | No | False |
 
+## Important Note
+
+To use this application, you need to download the race results PDF from the official race results platform, endu.net.
+
 ## Contributing
 Pull requests are welcome! Please open an issue first to discuss proposed changes.
 
