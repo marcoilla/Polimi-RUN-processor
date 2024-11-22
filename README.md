@@ -79,7 +79,7 @@ python main.py -i input_folder -o output_folder
 
 ## Important Note
 
-To use this application, you need to download the race results PDF from the official race results platform, [endu](https://www.endu.net).
+To use this application, you need to download the race results PDF from the official race results platform, [Endu](https://www.endu.net).
 
 ## Contributing
 Pull requests are welcome! Please open an issue first to discuss proposed changes.
