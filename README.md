@@ -34,9 +34,8 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 
 3. Install dependencies:
 ```bash
-pip install tkinter pdfplumber fpdf pandas
+pip install pdfplumber fpdf pandas
 ```
-or
 ```bash
 pip install -r requirements.txt
 ```
