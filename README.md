@@ -22,8 +22,8 @@ A Python application to extract, sort, and format race results from PDF files, s
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/polimi-run-results-processor.git
-cd polimi-run-results-processor
+git clone https://github.com/marcoilla/Polimi-RUN-processor.git
+cd Polimi-RUN-processor
 ```
 
 2. Create a virtual environment (optional but recommended):
