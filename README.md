@@ -1,7 +1,7 @@
-# PoliMi Run Race Results Processor
+# Endu Run Race Results Processor
 
 ## Overview
-A Python application to extract, sort, and format race results from PDF files, specifically designed for the PoliMi Run event. Supports both command-line and graphical user interfaces.
+A Python application to extract, sort, and format race results from PDF files, specifically designed for the Endu Run event. Supports both command-line and graphical user interfaces.
 
 ## Features
 - Convert race result PDFs to sorted CSV files
@@ -22,8 +22,8 @@ A Python application to extract, sort, and format race results from PDF files, s
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/marcoilla/Polimi-RUN-processor.git
-cd Polimi-RUN-processor
+git clone https://github.com/marcoilla/Endu-RUN-processor.git
+cd Endu-RUN-processor
 ```
 
 2. Create a virtual environment (optional but recommended):
@@ -99,4 +99,4 @@ The only requirements are to:
 - Include the original license and copyright notice in any substantial portion of the software
 - Provide attribution to the original author
 
-## Created with ❤️ by a PoliMi Student
+## Created with ❤️ by a Runner
