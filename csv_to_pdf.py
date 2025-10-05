@@ -1,7 +1,10 @@
 import pandas as pd
 from fpdf import FPDF
 
-def csv_to_pdf(csv_file, pdf_file, description="This table represents the data from the CSV file."):
+
+def csv_to_pdf(
+    csv_file, pdf_file, description="This table represents the data from the CSV file."
+):
     """
     Converts a CSV file to a PDF file with a tabular representation of the data.
 
@@ -21,21 +24,29 @@ def csv_to_pdf(csv_file, pdf_file, description="This table represents the data f
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=10)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    # pdf.set_font("Arial", size=12)
+    pdf.add_font("DejaVu", "", "fonts/DejaVuSans.ttf", uni=True)
+    pdf.set_font("DejaVu", "", 12)
 
     # Add a title to the PDF
-    pdf.set_font("Arial", style="B", size=14)
-    pdf.cell(0, 10, "Data Table", ln=True, align='C')
+    # pdf.set_font("Arial", style="B", size=14)
+    pdf.add_font("DejaVu", "", "fonts/DejaVuSans.ttf", uni=True)
+    pdf.set_font("DejaVu", "", 14)
+    pdf.cell(0, 10, "Data Table", ln=True, align="C")
     pdf.ln(5)
 
     # Add a description below the title
-    pdf.set_font("Arial", size=10)
+    # pdf.set_font("Arial", size=10)
+    pdf.add_font("DejaVu", "", "fonts/DejaVuSans.ttf", uni=True)
+    pdf.set_font("DejaVu", "", 10)
     line_height = pdf.font_size * 1.2
-    pdf.multi_cell(0, line_height, description, align='C')
+    pdf.multi_cell(0, line_height, description, align="C")
     pdf.ln(5)
 
     # Configure table fonts and row heights
-    pdf.set_font("Arial", size=9)
+    # pdf.set_font("Arial", size=9)
+    pdf.add_font("DejaVu", "", "fonts/DejaVuSans.ttf", uni=True)
+    pdf.set_font("DejaVu", "", 9)
     row_height = pdf.font_size * 1.5
 
     # Calculate column widths to fit the page
@@ -54,7 +65,13 @@ def csv_to_pdf(csv_file, pdf_file, description="This table represents the data f
 
     # Write the table headers
     for i, column_name in enumerate(data_frame.columns):
-        pdf.cell(column_widths[i], row_height, str(column_name).capitalize(), border=1, align='C')
+        pdf.cell(
+            column_widths[i],
+            row_height,
+            str(column_name).capitalize(),
+            border=1,
+            align="C",
+        )
     pdf.ln(row_height)
 
     # Write the rows of data
@@ -68,7 +85,7 @@ def csv_to_pdf(csv_file, pdf_file, description="This table represents the data f
                     text = f"{int(item)}"
                 else:
                     text = str(item)
-            pdf.cell(column_widths[i], row_height, text, border=1, align='C')
+            pdf.cell(column_widths[i], row_height, text, border=1, align="C")
         pdf.ln(row_height)
 
     # Save the PDF to a file

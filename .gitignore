@@ -162,5 +162,7 @@ cython_debug/
 #.idea/
 
 # Custom file
-Polimi_RUN_Winter_2024.pdf
+*.pkl
+*.pdf
 output/*
+**/.DS_Store
