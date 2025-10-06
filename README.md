@@ -1,4 +1,4 @@
-# Endu Run Race Results Processor
+# Endu RUN race results processor
 
 ## Overview
 A Python application to extract, sort, and format race results from PDF files, specifically designed for the Endu Run event. Supports both command-line and graphical user interfaces.
@@ -99,4 +99,4 @@ The only requirements are to:
 - Include the original license and copyright notice in any substantial portion of the software
 - Provide attribution to the original author
 
-## Created with ❤️ by a Runner
+#### Created with ❤️ by a Runner
