@@ -12,7 +12,8 @@ def pdf_to_csv(pdf_path, csv_path):
         pdf_path (str): Path to the input PDF file
         csv_path (str): Path where the sorted CSV will be saved
     """
-    participants_list = []  # Temporary list to store all participants data
+    participants_data = []
+    participants_list = []
 
     # Open PDF file and read its content
     with pdfplumber.open(pdf_path) as pdf:
@@ -20,97 +21,113 @@ def pdf_to_csv(pdf_path, csv_path):
         for page in pdf.pages:
             # Extract text from the page and split by line
             text = page.extract_text()
-            text = text.split("\n")
-            # print(text)
+            if text:
+                lines = text.split("\n")
 
-            # Parse header information on the first page
-            if page.page_number == 1:
-                competition_title = text[0]
-                competition_sponsor_info = text[1]
-                competition_date = text[2]
-                competition_type = text[3]
-                competition_header_data = text[5]
-                participants_data = text[6:-3]
-            else:
-                participants_data = text[2:-3]
+                # Parse header information on the first page
+                if page.page_number == 1:
+                    competition_title = text[0]
+                    competition_sponsor_info = text[1]
+                    competition_date = text[2]
+                    competition_type = text[3]
+                    competition_header_data = text[5]
 
-            competition_timekeeping_info = text[-3]
-            competition_site = text[-2]
+                competition_timekeeping_info = text[-3]
+                competition_site = text[-2]
 
-            # Extract participants data
-            i = 0
-            while i < len(participants_data):
-                # print(participants_data[i])
-                if participants_data[i] != "":
-                    # Split the participant's line data
-                    data = participants_data[i].split(" ")
-                    # print(data)
+                if page.page_number == 1:
+                    participants_data.extend(lines[6:-3])
+                else:
+                    participants_data.extend(lines[2:-3])
 
-                    # Search for bad formatted data
-                    formatted_data = []
-                    for item in data:
-                        # Check if the element contains both letters and numbers
-                        match = re.match(r"([A-Za-zÀ-ÿá-úà-ùè-éî-ôù]+)(\d+)", item)
-                        if match:
-                            name = match.group(1)
-                            year = match.group(2)
-                            formatted_data.append(name)
-                            formatted_data.append(year)
-                        else:
-                            formatted_data.append(item)
-                    data = formatted_data
+    # Extract participants data
+    i = 0
+    while i < len(participants_data):
+        if participants_data[i] != "":
+            # Split the participant's line data
+            data = participants_data[i].split(" ")
 
-                    # Check if the data is complete (contains all required fields)
-                    if len(data) >= 5:
-                        # Extract participant data
-                        bib_number = data[0]
-                        race_time = data[-1]
-                        nationality = data[-2]
-                        team = ""
-                        year = ""
+            # Search for bad formatted data
+            formatted_data = []
+            for item in data:
+                # Check if the element contains both letters and numbers
+                match = re.match(r"([A-Za-zÀ-ÿá-úà-ùè-éî-ôù]+)(\d+)", item)
+                if match:
+                    name = match.group(1)
+                    year = match.group(2)
+                    formatted_data.append(name)
+                    formatted_data.append(year)
+                else:
+                    formatted_data.append(item)
+            data = formatted_data
 
-                        # Extract the team name and year from the middle part of the data
-                        for word in reversed(
-                            data[:-2]
-                        ):  # Exclude the last two elements
-                            if word.isdigit() or word == "null":
-                                year = word
-                                break
-                            team = word + " " + team
-                        team = team[:-1]  # Remove the trailing space
+            # Check if the data is complete (contains all required fields)
+            if len(data) >= 5:
+                # Extract participant data
+                bib_number = data[0]
+                race_time = data[-1]
+                nationality = data[-2]
+                sex = ""
+                team = ""
+                year = ""
 
-                        athlete_name = " ".join(
-                            data[1 : data.index(year)]
-                        )  # Join the name parts
+                # Extract sex, team and year
+                year_idx = next(
+                    (
+                        i
+                        for i, w in enumerate(data[1:])
+                        if re.match(r"^\d{4}$", w) or w.lower() == "null"
+                    ),
+                    None,
+                )
 
-                    # Check for name continuation in the next line
-                    if i < len(participants_data) - 1:
-                        next_data = participants_data[i + 1].split(" ")
+                if year_idx is not None:
+                    year = data[1:][year_idx]
+                    if data[1:][year_idx + 1] == "M" or data[1:][year_idx + 1] == "F":
+                        sex = data[1:][year_idx + 1]
+                    athlete_name = " ".join(data[1:][:year_idx])
+                    team = " ".join(data[1:][year_idx + 2 : -2])
+                else:
+                    year = "null"
+                    sex = data[1:][-3]
+                    athlete_name = " ".join(data[1:][1:-3])
+                    team = ""
 
-                    # If next line is a continuation of the current participant's name
-                    if len(next_data) < 5:
-                        athlete_name += " " + " ".join(next_data[:])
-                        i += 1  # Skip the next line as it's part of current name
+                # Check if next line continues the athlete name
+                while (
+                    i + 1 < len(participants_data)
+                    and len(participants_data[i + 1].split()) < 5
+                ):
+                    next_line = participants_data[i + 1].strip()
+                    athlete_name += " " + next_line
                     i += 1
 
-                    # Add participant data to the temporary list
-                    participants_list.append(
-                        [bib_number, athlete_name, year, team, nationality, race_time]
-                    )
+                participants_list.append(
+                    [
+                        bib_number,
+                        athlete_name.strip(),
+                        year,
+                        sex,
+                        team,
+                        nationality,
+                        race_time,
+                    ]
+                )
+                i += 1
 
-        # Assemble competition metadata
-        competition_metadata = {
-            "title": competition_title,
-            "sponsor": competition_sponsor_info,
-            "date": competition_date,
-            "type": competition_type,
-            "header_data": competition_header_data,
-            "timekeeping_info": competition_timekeeping_info,
-            "site": competition_site,
-        }
+    # Assemble competition metadata
+    competition_metadata = {
+        "title": competition_title,
+        "sponsor": competition_sponsor_info,
+        "date": competition_date,
+        "type": competition_type,
+        "header_data": competition_header_data,
+        "timekeeping_info": competition_timekeeping_info,
+        "site": competition_site,
+    }
 
     # Sort participants list by race time
-    participants_list.sort(key=lambda x: parse_race_time(x[5]))
+    participants_list.sort(key=lambda x: parse_race_time(x[6]))
 
     # Write sorted data to CSV file
     with open(csv_path, mode="w", newline="", encoding="utf-8") as csv_file:
@@ -119,13 +136,14 @@ def pdf_to_csv(pdf_path, csv_path):
         # Write header row with position column
         writer.writerow(
             [
-                "position",
-                "bib number",
+                "pos",
+                "pett",
                 "athlete",
                 "year",
+                "sex",
                 "team",
-                "nationality",
-                "race time",
+                "nat",
+                "time",
             ]
         )
 
